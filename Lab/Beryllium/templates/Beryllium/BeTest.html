@@ -27,32 +27,38 @@
                     }
 
                     .well {
+                        
                         background-color: lightskyblue;
+                       
 
-                    }
-
-                    .well:hover+.wellInfo {
-                        display: block;
-                        color: red;
-                        position: absolute;
-                        background-color: lightsteelblue;
                     }
                 </style>
-
                 <div class="well">
 
                     <h1>{{ w.numInTest }}</h1>
                     <h2>{{w.row}},{{w.column}}</h2>
-                </div>
-                <div class="wellInfo">
-                    {% load render_partial %}
-  {% render_partial 'partial_view' arg2=w.id %}
+                    <button onclick="myFunction('wellInfo{{w.id}}')">Edit</button>
 
-                    
                 </div>
+                <div id="wellInfo{{w.id}}" style="display: none;" >
+                    {% load render_partial %}
+  {% render_partial 'WellPartial_view' arg2=w.id %}                    
+                </div>
+               
             </div>
             {% endif %}
             {% endfor %}
+           
+           <script>
+                function myFunction(id) {
+                  var x = document.getElementById(id);
+                  if (x.style.display === "none") {
+                    x.style.display = "block";
+                  } else {
+                    x.style.display = "none";
+                  }
+                }
+                </script>
         </div>
     </div>
 

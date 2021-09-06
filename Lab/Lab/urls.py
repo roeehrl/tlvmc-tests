@@ -25,7 +25,11 @@ urlpatterns = [
     path('Beryllium/BeTest/<int:id>/', views.BeTestView.as_view(), name='BeTest'),
     path('Beryllium/index', views.index.as_view()),
     path('Beryllium/deleteTests', deleteTests),
-    url(r'^partial-view/(?P<arg2>\w+)/$',
-    views.PartialView.as_view(),
-    name='partial_view'),
+    url(r'^WellPartial_view/(?P<arg2>\w+)/$',
+    views.WellPartialView.as_view(),
+    name='WellPartial_view'),
+    path('Beryllium/WellPartial_view/<int:id>',
+    views.WellPartialView.as_view(),
+    name='WellPartial_view'),
+  
 ]

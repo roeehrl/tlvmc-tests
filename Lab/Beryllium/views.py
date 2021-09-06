@@ -1,19 +1,38 @@
 from django.http.response import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.http import HttpResponseRedirect
 from django.views import View
 from Beryllium.models import Test,Well,Plate
 from .forms import TestForm, WellForm
 from .initializeTest import CreateTest
 from django.views.generic import TemplateView
+import django_excel as excel
 
-class PartialView(TemplateView):
-    template_name = 'Beryllium/partial_view.html'
+
+
+
+class WellPartialView(TemplateView):
+    template_name = 'Beryllium/WellPartial_view.html'
 
     def get_context_data(self, **kwargs):
-        result = WellForm(instance = Well.objects.get(id = kwargs['arg2'])) 
+        well= Well.objects.get(id = kwargs['arg2'])
+        result = WellForm(instance = well) 
         kwargs['form'] = result
-        return super(PartialView, self).get_context_data(**kwargs)
+        return super(WellPartialView, self).get_context_data(**kwargs)
+    
+    def post(self,request,id):
+        instance = Well.objects.get(id = id)
+        plate = instance.plate
+        test = plate.test
+        form = WellForm(request.POST, instance=instance)
+        if request.POST:
+            if form.is_valid():
+               form.save()
+        else:
+            data ="form not valid"
+       
+        return HttpResponseRedirect('/Beryllium/BeTest/'+str(test.id))
+
 
 class BeTestWell(View):
     template = 'Beryllium/BeTestWell.html'
@@ -29,8 +48,7 @@ class BeTestWell(View):
         except:
             print("oh no")
             return HttpResponse('<p>well was not found<p>')
-
-
+    
 
 
 def deleteTests(self):
@@ -48,7 +66,6 @@ class index(View):
 
         context = {
             "form" : form,
-            "well" : Well.objects.get(id = 1403)
         }
         return render(request,self.template,context)
     
@@ -56,7 +73,7 @@ class index(View):
         form = TestForm(request.POST)
         if form.is_valid():
             data = form.cleaned_data
-            testId = CreateTest(data['testName'],data['patient'],data['tester'])
+            testId = CreateTest(data['name'],data['patient'],data['tester'])
 
         return HttpResponseRedirect('BeTest/'+str(testId))
 
@@ -88,8 +105,6 @@ class BeTestView(View):
     }
 
         return render(request, self.template, context)
-        
 
-    def post(self, request):
-        # Code block for POST request
-        pass
+
+   
