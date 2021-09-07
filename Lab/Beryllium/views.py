@@ -1,14 +1,13 @@
 from django.http.response import HttpResponse
 from django.shortcuts import redirect, render
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, request
 from django.views import View
 from Beryllium.models import Test,Well,Plate
 from .forms import TestForm, WellForm
 from .initializeTest import CreateTest
 from django.views.generic import TemplateView
-import django_excel as excel
-
-
+from django.http import JsonResponse
+import json
 
 
 class WellPartialView(TemplateView):
@@ -50,6 +49,31 @@ class BeTestWell(View):
             return HttpResponse('<p>well was not found<p>')
     
 
+def WellExcel(request, id):
+    template = 'Beryllium/WellExcel.html'
+   
+    return render(request,template)
+
+def getWellsJSON(request, id):
+    test = Test.objects.get(id = id)
+    plates = Plate.objects.filter(test = test)
+    wells = Well.objects.none()
+    dic = {}
+    dic['data'] = { "id": '1', "name": 'Ted Right', "address": '' },{"id": '1', "name": 'Ted Right', "address": '' }
+   
+
+    for p in plates:
+        wells |= Well.objects.filter(plate = p)
+    
+    #for w in wells:
+       # data['name'] = w.id
+             
+  
+    
+  
+
+    d = json.dumps(dic)
+    return JsonResponse(dic, safe = False)
 
 def deleteTests(self):
     Test.objects.all().delete()
