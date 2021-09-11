@@ -58,22 +58,22 @@ def getWellsJSON(request, id):
     test = Test.objects.get(id = id)
     plates = Plate.objects.filter(test = test)
     wells = Well.objects.none()
-    dic = {}
-    dic['data'] = { "id": '1', "name": 'Ted Right', "address": '' },{"id": '1', "name": 'Ted Right', "address": '' }
-   
+    wellstring = ''
 
     for p in plates:
         wells |= Well.objects.filter(plate = p)
     
-    #for w in wells:
-       # data['name'] = w.id
-             
-  
+    for w in wells:
+        wellstring = wellstring + '{"id":' + str(w.id) +', "active":' + str(w.isActive) +"}," 
     
-  
+    wellstring = wellstring[:-1:]
+    json_data = '{"data":[ ' +wellstring+  ']}'
 
-    d = json.dumps(dic)
-    return JsonResponse(dic, safe = False)
+   # d = json.loads(str(json_data))
+    import ast
+    d = ast.literal_eval(json_data)
+    return JsonResponse(d,safe=False)
+
 
 def deleteTests(self):
     Test.objects.all().delete()
