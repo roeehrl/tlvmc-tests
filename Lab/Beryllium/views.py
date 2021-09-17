@@ -51,8 +51,11 @@ class BeTestWell(View):
 
 def WellExcel(request, id):
     template = 'Beryllium/WellExcel.html'
+    context = {
+        "test" : Test.objects.get(id = id)
+    }
    
-    return render(request,template)
+    return render(request,template,context)
 
 def getWellsJSON(request, id):
     test = Test.objects.get(id = id)
@@ -64,7 +67,7 @@ def getWellsJSON(request, id):
         wells |= Well.objects.filter(plate = p)
     
     for w in wells:
-        wellstring = wellstring + '{"id":' + str(w.id) +', "active":' + str(w.isActive) +"}," 
+        wellstring = wellstring + '{"id":' + str(w.id) +', "plate":' + str(w.plate.num)  +', "row":' + str(w.row)  +', "column":' + str(w.column)  +', "active":' + str(w.isActive) +"}," 
     
     wellstring = wellstring[:-1:]
     json_data = '{"data":[ ' +wellstring+  ']}'
@@ -74,6 +77,11 @@ def getWellsJSON(request, id):
     d = ast.literal_eval(json_data)
     return JsonResponse(d,safe=False)
 
+def saveWellsJSON(request):
+    if request.is_ajax():
+        if request.method == 'POST':
+            print ('Raw Data: "%s"' % request.body )
+    return HttpResponse("OK")
 
 def deleteTests(self):
     Test.objects.all().delete()
@@ -99,7 +107,7 @@ class index(View):
             data = form.cleaned_data
             testId = CreateTest(data['name'],data['patient'],data['tester'])
 
-        return HttpResponseRedirect('BeTest/'+str(testId))
+        return HttpResponseRedirect('TestView/'+str(testId))
 
     
 
@@ -125,6 +133,38 @@ class BeTestView(View):
          "test" : test,
          "plates" : plates,
          "wells" : wells
+         
+    }
+
+        return render(request, self.template, context)
+
+
+        
+
+class TestViewView(View):
+    template = 'Beryllium/TestView.html'
+
+    def get(self, request,id):
+
+
+        # Code block for GET request
+        try:    
+            beTest = BeTestView
+            test = Test.objects.get(id = id)
+            plates = Plate.objects.filter(test = test)
+            wells = Well.objects.none()
+            for p in plates:
+                wells |= Well.objects.filter(plate = p)
+        except:
+            print("oh no")
+            test = None
+
+
+        context = {
+         "test" : test,
+         "plates" : plates,
+         "wells" : wells,
+       
          
     }
 
