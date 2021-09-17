@@ -1,3 +1,4 @@
+from ast import parse
 from django.http.response import HttpResponse
 from django.shortcuts import redirect, render
 from django.http import HttpResponseRedirect, request
@@ -31,7 +32,7 @@ class WellPartialView(TemplateView):
         else:
             data ="form not valid"
        
-        return HttpResponseRedirect('/Beryllium/BeTest/'+str(test.id))
+        return HttpResponseRedirect('/Beryllium/TestView/'+str(test.id))
 
 
 class BeTestWell(View):
@@ -68,7 +69,7 @@ def getWellsJSON(request, id):
         wells |= Well.objects.filter(plate = p)
     
     for w in wells:
-        wellstring = wellstring + '{"id":' + str(w.id) +', "plate":' + str(w.plate.num)  +', "row":' + str(w.row)  +', "column":' + str(w.column)  +', "active":' + str(w.isActive) +', "reading":' + str(w.reading) +"}," 
+        wellstring = wellstring + '{"id":' + str(w.id) +', "plate":' + str(w.plate.num)  +', "row":' + str(w.row)  +', "column":' + str(w.column)  +', "active":' + str(w.isActive) +', "numInTest":' + str(w.numInTest) +', "reading":' + str(w.reading) +"}," 
     
     wellstring = wellstring[:-1:]
     json_data = '{"data":[ ' +wellstring+  ']}'
@@ -88,7 +89,26 @@ def saveWellsJSON(request):
             data = substring[1:-1]
             ls = data.split("],[")
         for obj in ls:
-            start = obj.find('')
+            print (obj)
+            raw = obj.split(",")
+            well = Well.objects.get(id = raw[0])
+            reading = stringReading = raw[-1]
+
+            try:
+
+                well.reading = int(reading)
+                well.save()
+            except:
+                 
+                try:
+                    stringReading = raw[-1]
+                    reading = stringReading[1:-1]
+                    print(stringReading)
+                    print(reading)
+                    well.reading = int(reading)
+                    well.save()
+                except:
+                     return HttpResponse("Reading is not a number")
             
     return HttpResponse("OK")
 

@@ -28,18 +28,18 @@ const csrftoken = getCookie('csrftoken');
 {% endblock %}
 
 {% block content %}
+<div>
+<button id="save" class="button button--primary button--blue">Save data</button>
 
-<div id="example1" class="hot"></div>
-
-<div class="controls">
-  <button id="save" class="button button--primary button--blue">Save data</button>
-
- 
+<div id="tableTest{{test.id}}" class="hot"></div>
 </div>
 
 
+ 
+
+
 <script>
-const container = document.querySelector('#example1');
+const container = document.querySelector('#tableTest{{test.id}}');
 const save = document.querySelector('#save');
 
 let autosaveNotification;
@@ -47,12 +47,12 @@ let autosaveNotification;
 const hot = new Handsontable(container, {
  
   rowHeaders: true,
-  colHeaders: ['Well ID', 'Plate No.', 'Row','Column', 'Is Active','Result to fill'],  height: 'auto',
+  colHeaders: ['Well ID', 'Plate No.', 'Row','Column', 'Is Active','Well No.','Result to fill'],  height: 'auto',
   licenseKey: 'non-commercial-and-evaluation',
    columns: [
     {
       data: 'id',
-      readOnly: true
+      readOnly: true,
     },
     {
       data: 'plate',
@@ -75,9 +75,18 @@ const hot = new Handsontable(container, {
 
     },
     {
+      data: 'numInTest',
+      readOnly: true
+
+    },
+    {
       data: 'reading'
     }
-  ]
+  ],
+  hiddenColumns: {
+    columns: [0],
+    indicators: true
+  },
 
 });
 
@@ -88,6 +97,7 @@ const hot = new Handsontable(container, {
     hot.loadData(data.data);
 
   });
+ 
 
 
 Handsontable.dom.addEvent(save, 'click', () => {
@@ -96,9 +106,9 @@ Handsontable.dom.addEvent(save, 'click', () => {
     const response = res.response;
 
     if (response === 'OK') {
-      exampleConsole.innerText = 'Data saved';
+      alert('Data saved');
     } else {
-      exampleConsole.innerText = 'Save error';
+      alert('Save error, ' + response);
     }
   });
 });
