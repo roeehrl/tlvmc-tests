@@ -6,7 +6,24 @@
 <link href="{% static 'node_modules/handsontable/dist/handsontable.full.min.css' %}" rel="stylesheet" media="screen">
 <script src="{% static 'node_modules/jquery/dist/jquery.min.js' %}"></script>
 <script src="{% static 'node_modules/handsontable/dist/handsontable.full.min.js' %}"></script>
-
+<script>
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+const csrftoken = getCookie('csrftoken');
+</script>
 
 {% endblock %}
 
@@ -16,18 +33,13 @@
 
 <div class="controls">
   <button id="save" class="button button--primary button--blue">Save data</button>
-  <label>
-    <input type="checkbox" name="autosave" id="autosave"/>
-    Autosave
-  </label>
+
+ 
 </div>
-<pre id="example1console" class="console"></pre>
 
 
 <script>
 const container = document.querySelector('#example1');
-const exampleConsole = document.querySelector('#example1console');
-const autosave = document.querySelector('#autosave');
 const save = document.querySelector('#save');
 
 let autosaveNotification;
@@ -35,28 +47,38 @@ let autosaveNotification;
 const hot = new Handsontable(container, {
  
   rowHeaders: true,
-  colHeaders: true,
-  height: 'auto',
+  colHeaders: ['Well ID', 'Plate No.', 'Row','Column', 'Is Active','Result to fill'],  height: 'auto',
   licenseKey: 'non-commercial-and-evaluation',
-  
-  afterChange: function (change, source) {
-    if (source === 'loadData') {
-      return; //don't save this change
+   columns: [
+    {
+      data: 'id',
+      readOnly: true
+    },
+    {
+      data: 'plate',
+      readOnly: true
+
+    },
+    {
+      data: 'row',
+      readOnly: true
+
+    },
+    {
+      data: 'column',
+      readOnly: true
+
+    },
+    {
+      data: 'active',
+      readOnly: true
+
+    },
+    {
+      data: 'reading'
     }
+  ]
 
-    if (!autosave.checked) {
-      return;
-    }
-
-    clearTimeout(autosaveNotification);
-
-    ajax('/docs/9.0/scripts/json/save.json', 'GET', JSON.stringify({ data: change }), data => {
-      exampleConsole.innerText = 'Autosaved (' + change.length + ' ' + 'cell' + (change.length > 1 ? 's' : '') + ')';
-      autosaveNotification = setTimeout(() => {
-        exampleConsole.innerText ='Changes will be autosaved';
-      }, 1000);
-    });
-  }
 });
 
 
@@ -65,13 +87,12 @@ const hot = new Handsontable(container, {
 
     hot.loadData(data.data);
 
-    exampleConsole.innerText = 'Data loaded';
   });
 
 
 Handsontable.dom.addEvent(save, 'click', () => {
   // save all cell's data
-  ajax('/Beryllium/saveWellsJSON/', 'GET', JSON.stringify({ data: hot.getData() }), res => {
+  ajax('/Beryllium/saveWellsJSON/', 'POST' ,JSON.stringify({ data: hot.getData() }), res => {
     const response = res.response;
 
     if (response === 'OK') {
@@ -82,13 +103,8 @@ Handsontable.dom.addEvent(save, 'click', () => {
   });
 });
 
-Handsontable.dom.addEvent(autosave, 'click', () => {
-  if (autosave.checked) {
-    exampleConsole.innerText = 'Changes will be autosaved';
-  } else {
-    exampleConsole.innerText ='Changes will not be autosaved';
-  }
-});
+
+
 
 function ajax(url, method, params, callback) {
   let obj;
@@ -114,6 +130,7 @@ function ajax(url, method, params, callback) {
   };
   obj.open(method, url, true);
   obj.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+  obj.setRequestHeader('X-CSRFToken', csrftoken);
   obj.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
   obj.send(params);
 

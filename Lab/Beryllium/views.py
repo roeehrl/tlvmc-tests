@@ -8,6 +8,7 @@ from .initializeTest import CreateTest
 from django.views.generic import TemplateView
 from django.http import JsonResponse
 import json
+import re
 
 
 class WellPartialView(TemplateView):
@@ -67,7 +68,7 @@ def getWellsJSON(request, id):
         wells |= Well.objects.filter(plate = p)
     
     for w in wells:
-        wellstring = wellstring + '{"id":' + str(w.id) +', "plate":' + str(w.plate.num)  +', "row":' + str(w.row)  +', "column":' + str(w.column)  +', "active":' + str(w.isActive) +"}," 
+        wellstring = wellstring + '{"id":' + str(w.id) +', "plate":' + str(w.plate.num)  +', "row":' + str(w.row)  +', "column":' + str(w.column)  +', "active":' + str(w.isActive) +', "reading":' + str(w.reading) +"}," 
     
     wellstring = wellstring[:-1:]
     json_data = '{"data":[ ' +wellstring+  ']}'
@@ -80,8 +81,19 @@ def getWellsJSON(request, id):
 def saveWellsJSON(request):
     if request.is_ajax():
         if request.method == 'POST':
-            print ('Raw Data: "%s"' % request.body )
+            data = str(request.body)
+            start = data.find('"data":[') + len('"data":[')
+            end = data.find("]}")
+            substring = data[start:end]
+            data = substring[1:-1]
+            ls = data.split("],[")
+        for obj in ls:
+            start = obj.find('')
+            
     return HttpResponse("OK")
+
+
+
 
 def deleteTests(self):
     Test.objects.all().delete()
