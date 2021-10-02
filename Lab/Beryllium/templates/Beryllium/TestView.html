@@ -2,11 +2,11 @@
 
 {% block imports %}
 {% load static %}
-<link rel="stylesheet" href="{% static 'Beryllium/BeTest/css/testStyle.css' %}">
 {% endblock %}
 
 
 {% block content %}
+<div class="container">
 <h1>
     Test ID{{test.id}} For Patient {{test.patient}} conducted by {{test.tester}}
     Date of conduction {{test.date}}
@@ -18,4 +18,43 @@
 
 </div>
 
+<script src="{%static  'node_modules\jquery\dist\jquery.min.js'%}"></script>
+
+
+<script>
+ $( document ).ready(changeColor()
+                );
+
+
+ function changeColor(){
+                    const divs = document.getElementsByClassName("well");
+                    divs.forEach(element => {
+                        var txt = element.getAttribute('id');
+                        id = txt.split('well').pop();
+                        var wellDiv = document.getElementById(txt);
+                        var resp = "";
+
+                        var xhttp = new XMLHttpRequest();
+                       xhttp.onload = function() {
+                            resp = xhttp.responseText;
+                            console.log(resp);
+                             if( resp == "False"){
+                              wellDiv.style.backgroundColor = "red";
+                             }
+                       }
+
+  
+                        xhttp.open("GET", "/Beryllium/isWellActive/"+id);
+                        xhttp.send();
+
+                        
+                        
+                        
+
+                        }
+                    )
+                    
+                }
+</script>
+</div>
 {% endblock %}

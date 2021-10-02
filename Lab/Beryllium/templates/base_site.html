@@ -2,7 +2,13 @@
 <html lang="en">
 
 <head>
-    {% block imports %} 
+    {%load static%}
+    <link href="{% static 'node_modules\bootstrap\css\bootstrap.min.css' %}" rel="stylesheet"/> 
+    <link href="{% static 'node_modules\font-awesome\css\all.css' %}" rel="stylesheet"/> 
+    <link rel="stylesheet" href="{% static 'Beryllium/BeTest/css/testStyle.css' %}">
+
+
+    {% block imports %}
     {% endblock %}
    
 
@@ -10,14 +16,18 @@
 </head>
 
 <body>
-    {% block sidebar %}
-    <!-- insert default navigation text for every page -->{% endblock %}
+
+
+  
+<div class="container-fluid">
     {% block content %}
-    <!-- default content text (typically empty) -->{% endblock %}
+    <!-- default content text (typically empty) -->
+    {% endblock %}
+
 
     {% block imports_footer %} 
     {% endblock %}
-   
+</div>
 </body>
 
 </html>

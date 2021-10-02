@@ -1,0 +1,27 @@
+{% extends "../base_site.html" %}
+
+{% block imports %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'Beryllium/BeTest/css/testStyle.css' %}">
+{% endblock %}
+
+
+{% block content %}
+<h1>
+    Test ID{{test.id}} For Patient {{test.patient}} conducted by {{test.tester}}
+    Date of conduction {{test.date}}
+</h1>
+<div id = "rawView" class="test" >
+{% include "Beryllium/WellExcel.html" %}
+
+{%include "Beryllium/TestCalc.html" %}
+    
+
+</div>
+
+<script src="{%static  'node_modules\jquery\dist\jquery.min.js'%}"></script>
+
+
+
+
+{% endblock %}

@@ -1,21 +1,96 @@
 {% extends "../base_site.html" %}
-
 {% block content %}
-<div>
-    <div>
-        Create Beryllium test
-        <form method="post">
-            {% csrf_token %}
-            {{ form }}
-            <input type="submit" value="Submit">
-        </form>
-        <button onclick="location.href='deleteTests'"
-        value='click here'></button>
+{% load crispy_forms_tags %}
+<div class="row">
+    <div class="col">
+        <h3>All Beryllium Tests</h3>
+        <table id="tests">
+                <tbody>
+                    <tr>
+                        <th>Test ID</th><th>Title</th><th>Pateint</th><th>Date</th><th>Tester</th><th>Remarks</th>
+                    {%for p in tests%}
+                    <tr>
+                        <td>{{p.id}}</td><td>{{p.name}}</td><td>{{p.patient}}</td><td>{{p.date}}</td><td>{{p.tester}}</td><td>{{p.description}}</td>  <td>
+                            <a class="add" title="Add" data-toggle="tooltip"><i class="fas fa-external-link-alt"></i></a>
+                            <a class="edit" title="Edit" data-toggle="tooltip"><i class="fas fa-edit"></i></a>
+                            <a class="delete" title="Delete" data-toggle="tooltip"><i class="fas fa-trash-alt"></i></a>
+                        </td>
+                    </tr>
+                    {%endfor%}
+                    </tr>
+                     <tr>
+                        <td>
+                            <a>Add new</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
     </div>
+     <div class="">
+        <h3>Log a test</h3>
+        <form method="post" class="form-box">
+            {% csrf_token %}
+            {{form|crispy}}
+            </br>
+            <button class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+</div>
+<div class="row">
+   
+    <div class="col">
+       
+            <h3>Patients</h3>
+            <table id="patients">
+                <tbody>
+                    <tr>
+                        <th>ID No.</th><th>Name</th>
+                    {%for p in patients%}
+                    <tr>
+                        <td>{{p.id}}</td><td>{{p}}</td><td><a class="edit" title="Edit" data-toggle="tooltip"><i class="fas fa-edit"></i></a>
+                            <a class="delete" title="Delete" data-toggle="tooltip"><i class="fas fa-trash-alt"></i></a></td>
+                    </tr>
+                    {%endfor%}
+                    </tr>
+                    <tr>
+                        <td>
+                            <a>Add new</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+       
+    </div>
+    <div class="col">
+       
+            <h3>Testers</h3>
+            <table id="testers">
+                <tbody>
+                    <tr>
+                        <th>ID No.</th><th>Name</th>
+                    {%for p in testers%}
+                    <tr>
+                        <td>{{p.id}}</td><td>{{p}}</td><td><a class="edit" title="Edit" data-toggle="tooltip"><i class="fas fa-edit"></i></a>
+                            <a class="delete" title="Delete" data-toggle="tooltip"><i class="fas fa-trash-alt"></i></a></td>
+                    </tr>
+                    {%endfor%}
+                    </tr>
+                     <tr>
+                        <td>
+                            <a>Add new</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        
+    </div>
+   
 </div>
 
 
+<script>
 
+</script>
 {% endblock %}
 
 

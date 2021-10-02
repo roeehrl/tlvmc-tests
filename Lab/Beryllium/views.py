@@ -1,15 +1,24 @@
 from ast import parse
+from django.db.models.fields.related import OneToOneField
 from django.http.response import HttpResponse
 from django.shortcuts import redirect, render
 from django.http import HttpResponseRedirect, request
 from django.views import View
-from Beryllium.models import Test,Well,Plate
+from Beryllium.models import Test,Well,Plate,Patient,Tester
 from .forms import TestForm, WellForm
 from .initializeTest import CreateTest
 from django.views.generic import TemplateView
 from django.http import JsonResponse
 import json
 import re
+
+def isWellActive(request, id):
+    w = Well.objects.get(id = id)
+    if(w.isActive):
+        return HttpResponse("True",content_type="text/plain")
+    return HttpResponse("False", content_type="text/plain")
+
+
 
 
 class WellPartialView(TemplateView):
@@ -127,9 +136,15 @@ class index(View):
   
     def get(self,request):
         form = TestForm()
+        patients = Patient.objects.all()
+        testers = Tester.objects.all()
+        tests = Test.objects.all()
 
         context = {
             "form" : form,
+            "patients" : patients,
+            "testers" :testers,
+            "tests" : tests,
         }
         return render(request,self.template,context)
     
@@ -203,4 +218,49 @@ class TestViewView(View):
         return render(request, self.template, context)
 
 
-   
+class TestCalc(View):
+    template = 'Beryllium/TestCalc.html'
+
+    def get(self, request, id):
+        test = Test.objects.get(id = id)
+        plates = Plate.objects.filter(test = test)
+        wells = Well.objects.none()
+
+        from .calc import Formula
+        f = Formula(test)
+        print(f)
+        dict = f.wellsDict
+        stats = f.statsDict
+        context = {
+            "test" : test,
+            "plates" : plates,
+            "loop": ['sec1','sec2','sec3','sec4'],
+            "wells": wells,
+            "stats" : stats,
+            "resultDict" : f.resultDict,
+            "controlDict" : f.controlDict
+        }
+
+        return render(request, self.template,context)
+
+
+def getSecJSON(request,id ,num,sec):
+    test = Test.objects.get(id = id)
+    plates = Plate.objects.filter(test = test)
+    from .calc import Formula
+    f = Formula(test)
+    dict = f.wellsDict
+    lst = dict[num][sec]
+    wellstring = ''
+
+
+    for w in lst:
+        wellstring = wellstring + '{"numInTest":' + str(w.numInTest) +', "reading":' + str(w.reading) +"}," 
+    
+    wellstring = wellstring[:-1:]
+    json_data = '{"data":[ ' +wellstring+  ']}'
+
+   # d = json.loads(str(json_data))
+    import ast
+    d = ast.literal_eval(json_data)
+    return JsonResponse(d,safe=False)

@@ -1,0 +1,155 @@
+{% extends "../base_site.html" %}
+
+{% block imports %}
+{% load static %}
+
+<link href="{% static 'node_modules/handsontable/dist/handsontable.full.min.css' %}" rel="stylesheet" media="screen">
+<script src="{% static 'node_modules/jquery/dist/jquery.min.js' %}"></script>
+<script src="{% static 'node_modules/handsontable/dist/handsontable.full.min.js' %}"></script>
+<script>
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+const csrftoken = getCookie('csrftoken');
+</script>
+
+{% endblock %}
+
+{% block content %}
+
+<div id = "results" class="container">
+<h2>Results:</h2>
+{%for key,value in resultDict.items%}  
+{%for key2,value2 in value.items%}
+
+<p>{{key}}
+{{key2}}: {{value2}}</p>
+
+
+{%endfor%}
+{%endfor%}
+
+{%for key,value in controlDict.items%}  
+
+
+<p>{{key}}: {{value}} </p>
+
+
+{%endfor%}
+
+<h2>Specification:</h2>
+
+{%for p in plates%}
+<div id = "plate{{p.num}}" class="wrapper">
+    <script>
+    const hot{{p.num}} = {};
+    </script>
+
+    {% for x in loop%}
+    <div id = "viewCalc">
+    <div id="table{{p.num}}{{x}}" class="hot"></div>
+    <p>{%for key,value in stats.items%}
+  
+        {%if key == p.num%}
+            {%for key2,value2 in value.items%}
+            
+            {%if key2 == x %}
+                
+                {%for key3,value3 in value2.items%}
+                   <p> {{key3}} : {{value3}}</p>
+                {%endfor%}
+            
+            {%endif%}
+            {%endfor%}
+        {%endif%}
+
+    {%endfor%}
+    </p>
+    </div>
+    
+
+
+ 
+ 
+
+
+<script>
+var container = document.querySelector('#table{{p.num}}{{x}}');
+
+
+hot{{p.num}}["{{x}}"] = new Handsontable(container, {
+ 
+  rowHeaders: true,
+  colHeaders: ['Well No.','Result'],  height: 'auto',
+  licenseKey: 'non-commercial-and-evaluation',
+   columns: [
+    {
+      data: 'numInTest',
+      readOnly: true
+
+    },
+    {
+      data: 'reading'
+    }
+  ],
+ 
+
+});
+
+
+  ajax('/Beryllium/getSecJSON/'+'{{test.id}}/' + '{{p.num}}/' + '{{x}}', 'GET', '', res => {
+    const data = JSON.parse(res.response);
+
+    hot{{p.num}}["{{x}}"].loadData(data.data);
+
+  });
+ 
+function ajax(url, method, params, callback) {
+  let obj;
+
+  try {
+    obj = new XMLHttpRequest();
+  } catch (e) {
+    try {
+      obj = new ActiveXObject('Msxml2.XMLHTTP');
+    } catch (e) {
+      try {
+        obj = new ActiveXObject('Microsoft.XMLHTTP');
+      } catch (e) {
+        alert('Your browser does not support Ajax.');
+        return false;
+      }
+    }
+  }
+  obj.onreadystatechange = () => {
+    if (obj.readyState == 4) {
+      callback(obj);
+    }
+  };
+  obj.open(method, url, true);
+  obj.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+  obj.setRequestHeader('X-CSRFToken', csrftoken);
+  obj.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+  obj.send(params);
+
+  return obj;
+}
+</script>
+ {%endfor%}
+ </div>
+ {%endfor%}
+</div>
+{% endblock %}

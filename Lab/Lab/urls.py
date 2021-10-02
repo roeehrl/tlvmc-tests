@@ -17,18 +17,21 @@ from django.contrib import admin
 from django.conf.urls import url
 from django.urls import path
 from Beryllium import views
-from Beryllium.views import deleteTests, WellExcel, getWellsJSON, saveWellsJSON
+from Beryllium.views import deleteTests, WellExcel, getWellsJSON, saveWellsJSON, isWellActive, getSecJSON
 
 
 urlpatterns = [
     path('Beryllium/admin/', admin.site.urls),
     path('Beryllium/BeTest/<int:id>/', views.BeTestView.as_view(), name='BeTest'),
-    path('Beryllium/TestView/<int:id>/', views.TestViewView.as_view(), name='TesViewt'),
+    path('Beryllium/TestView/<int:id>/', views.TestViewView.as_view(), name='ResultViewt'),
     path('Beryllium/index', views.index.as_view()),
+    path('Beryllium/TestCalc/<int:id>', views.TestCalc.as_view()),
     path('Beryllium/deleteTests', deleteTests),
     path('Beryllium/WellExcel/<int:id>', WellExcel),
     path('Beryllium/WellsJSON/<int:id>', getWellsJSON),
     path('Beryllium/saveWellsJSON/',saveWellsJSON),
+    path('Beryllium/isWellActive/<int:id>',isWellActive),
+    path('Beryllium/getSecJSON/<int:id>/<int:num>/<sec>',getSecJSON),
 
 
 

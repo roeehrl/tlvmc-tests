@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'Beryllium.apps.BerylliumConfig',
     'django_render_partial',
+    'crispy_forms',
 ]
 
 MIDDLEWARE = [

@@ -2,6 +2,7 @@
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 10px;
+    margin-bottom:3%;
   }
 
 .test {
@@ -10,10 +11,23 @@
     gap: 5px;
 }
 
-
+.well{
+    border-radius: 10px;
+}
 
 .plate{
     background-color: rgb(193, 199, 199);
 
+}
+
+.fa-cog{
+    color:lightgray
+}
+.fa-cog:hover{
+    color:grey
+  }
+
+.container{
+    margin: 1%;
 }
 

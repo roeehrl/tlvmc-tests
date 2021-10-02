@@ -39,7 +39,7 @@ const csrftoken = getCookie('csrftoken');
 
 
 <script>
-const container = document.querySelector('#tableTest{{test.id}}');
+var container = document.querySelector('#tableTest{{test.id}}');
 const save = document.querySelector('#save');
 
 let autosaveNotification;
@@ -107,6 +107,7 @@ Handsontable.dom.addEvent(save, 'click', () => {
 
     if (response === 'OK') {
       alert('Data saved');
+      document.location.href = "/Beryllium/TestCalc/" + {{test.id}};
     } else {
       alert('Save error, ' + response);
     }
