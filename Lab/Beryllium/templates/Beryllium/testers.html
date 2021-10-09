@@ -1,0 +1,85 @@
+{% extends "../base_site.html" %}
+    {%load static%}
+    {% load crispy_forms_tags %}
+
+{%block imports%}
+<link href="{%static 'node_modules/datatables/dataTables.bootstrap4.min.css'%}" rel="stylesheet">
+
+{%endblock%}
+
+{%block content%}
+
+<div class="row">
+    <div class="col">
+        <div class="card shadow mb-4">
+            <!-- Card Header - Dropdown -->
+            <div
+            class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-primary">All Testers</h6>
+            <button class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">Add new tester</button>
+
+            </div>
+            
+            <!-- Card Body -->
+            <div class="card-body">
+                <div class="table-responsive">
+                        <table id="testers" class="table table-bordered">
+                            <thead>
+                            <tr>
+                            <th>ID No.</th><th>Name</th><th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                {%for p in testers%}
+                                <tr>
+                                    <td>{{p.id}}</td><td>{{p}}</td><td><a class="edit" title="Edit" data-toggle="tooltip"><i class="fas fa-edit"></i></a>
+                                        <a class="delete" title="Delete" data-toggle="tooltip"><i class="fas fa-trash-alt"></i></a></td>
+                                </tr>
+                                {%endfor%}
+                            </tbody>
+                        </table>
+                        
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+
+
+<footer class="sticky-footer ">
+    <div class="navbar navbar-default navbar-fixed-bottom">
+        <ul class="navbar-nav ml-auto">
+        <img src="{%static 'vectors/undrawTesters.svg'%}" width="300px"alt="">
+
+        </ul>
+
+    </div>
+</footer>
+
+    <!-- Page level custom scripts -->
+    <script src="{%static 'node_modules/datatables/jquery.dataTables.min.js'%}"></script>
+    <script src="{%static 'node_modules/datatables/dataTables.bootstrap4.min.js'%}"></script>
+    
+    <script>
+
+        $(document).ready(function() {
+            $('#testers').DataTable();
+            });
+
+
+        function edit(id){
+            $("#editDiv").css("display","block");
+            
+        }
+
+
+        function deleteTester(id){
+            xhttp.open("POST", "/Beryllium/deleteTester/"+id, true);
+            xhttp.send();
+        }
+        
+    </script>
+
+{%endblock%}
