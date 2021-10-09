@@ -9,6 +9,7 @@ from .forms import TestForm, WellForm
 from .initializeTest import CreateTest
 from django.views.generic import TemplateView
 from django.http import JsonResponse
+from .calc import Formula
 import json
 import re
 
@@ -68,6 +69,15 @@ def WellExcel(request, id):
    
     return render(request,template,context)
 
+def dashboard(request,id):
+    template = 'Beryllium/dashboard.html'
+    context = {
+        "test" : Test.objects.get(id = id)
+    }
+   
+    return render(request,template)
+
+
 def getWellsJSON(request, id):
     test = Test.objects.get(id = id)
     plates = Plate.objects.filter(test = test)
@@ -121,18 +131,24 @@ def saveWellsJSON(request):
             
     return HttpResponse("OK")
 
+def testersView(request):
+    template = "Beryllium/testers.html"
+    context = {'testers':Tester.objects.all()}
+
+    return render(request,template,context)
+
+def patientsView(request):
+    template = "Beryllium/patients.html"
+    context = {'patients':Patient.objects.all()}
+
+    return render(request,template,context)
 
 
-
-def deleteTests(self):
-    Test.objects.all().delete()
-
-    return HttpResponseRedirect('index')
 
 
 # Create your views here.
-class index(View):
-    template = 'Beryllium/index.html'
+class dashboard(View):
+    template = 'Beryllium/dashboard.html'
   
     def get(self,request):
         form = TestForm()
@@ -154,7 +170,7 @@ class index(View):
             data = form.cleaned_data
             testId = CreateTest(data['name'],data['patient'],data['tester'])
 
-        return HttpResponseRedirect('TestView/'+str(testId))
+        return HttpResponseRedirect('/Beryllium/TestView/'+str(testId))
 
     
 
@@ -226,9 +242,12 @@ class TestCalc(View):
         plates = Plate.objects.filter(test = test)
         wells = Well.objects.none()
 
-        from .calc import Formula
-        f = Formula(test)
-        print(f)
+        
+        try:
+            f = Formula(test)
+        except:
+           return HttpResponseRedirect('TestView/'+str(test.id)+'/error')
+
         dict = f.wellsDict
         stats = f.statsDict
         context = {
@@ -240,7 +259,7 @@ class TestCalc(View):
             "resultDict" : f.resultDict,
             "controlDict" : f.controlDict
         }
-
+        
         return render(request, self.template,context)
 
 
@@ -264,3 +283,16 @@ def getSecJSON(request,id ,num,sec):
     import ast
     d = ast.literal_eval(json_data)
     return JsonResponse(d,safe=False)
+
+def exportDoc(request,id):
+    test = Test.objects.get(id = id)
+    f = Formula(test)
+    isNormal = request.POST["isNormal"]=='Yes'
+    isPositive = request.POST["isPositive"]=='Positive'
+    profession = request.POST["Profession"]
+    
+    respone = f.exportToDoc(isNormal,isPositive,profession)
+  
+ 
+    return respone
+

@@ -11,28 +11,29 @@
                     {%for p in tests%}
                     <tr>
                         <td>{{p.id}}</td><td>{{p.name}}</td><td>{{p.patient}}</td><td>{{p.date}}</td><td>{{p.tester}}</td><td>{{p.description}}</td>  <td>
-                            <a class="add" title="Add" data-toggle="tooltip"><i class="fas fa-external-link-alt"></i></a>
-                            <a class="edit" title="Edit" data-toggle="tooltip"><i class="fas fa-edit"></i></a>
-                            <a class="delete" title="Delete" data-toggle="tooltip"><i class="fas fa-trash-alt"></i></a>
+                            <a class="view" title="View" onclick="redirect({{p.id}})"><i class="fas fa-external-link-alt"></i></a>
+                            <a class="edit" title="Edit" type="submit"><i class="fas fa-edit"></i></a>
+                            <a class="delete" title="Delete" type="submit"><i class="fas fa-trash-alt"></i></a>
                         </td>
                     </tr>
                     {%endfor%}
                     </tr>
                      <tr>
                         <td>
-                            <a>Add new</a>
+                            <button id ="addTestButton" class="btn btn-primary">Add new</button>
                         </td>
                     </tr>
                 </tbody>
-            </table>
+        </table>
     </div>
-     <div class="">
+     <div id="addTest">
+     <a id ="closeAddTest"><i class="fas fa-window-close"></i></a>
         <h3>Log a test</h3>
         <form method="post" class="form-box">
             {% csrf_token %}
             {{form|crispy}}
             </br>
-            <button class="btn btn-primary">Submit</button>
+            <button id="submitter" onclick("submitter()") class="btn btn-primary">Submit</button>
         </form>
     </div>
 </div>
@@ -89,6 +90,36 @@
 
 
 <script>
+$( document ).ready(function() {
+    $( "#addTest" ).css("display","none");
+});
+
+$( "#addTestButton" ).click(function() {
+  $( "#addTest" ).css("display","block");
+});
+
+$( "#closeAddTest" ).click(function() {
+  $( "#addTest" ).css("display","none");
+});
+
+$("#closeAddTest").on("mouseenter", function () {
+	$(this).css("color","red");
+}).on("mouseleave", function () {
+	$(this).css("color","black");
+});
+
+
+
+
+function deletePatient(id){
+    xhttp.open("POST", "/Beryllium/deletePatient/"+id, true);
+    xhttp.send();
+}
+
+function deleteTester(id){
+    xhttp.open("POST", "/Beryllium/deleteTester/"+id, true);
+    xhttp.send();
+}
 
 </script>
 {% endblock %}

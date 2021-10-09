@@ -1,5 +1,9 @@
 import statistics
 from .models import Test, Plate,Well
+from docx import Document
+from pathlib import Path
+import os
+from django.http import Http404, HttpResponse
 
 class Formula():
 
@@ -90,4 +94,44 @@ class Formula():
             nums.append(w.reading)
 
         return statistics.stdev(nums)
+
+    def exportToDoc(self,isNormal,isPositive,profession):
+        path = Path(__file__).resolve().parent
+        docStr = str(path)+"/base_xls/system_files/template.docx"
+        newStr = str(path)+"/exports/" + str(self.test.patient) +" " + str(self.test.patient.id) + "RES.docx"
+        doc = Document(docStr)
+        dic = {"name":self.test.patient.__str__(), "date":self.test.date.__str__(),"id":self.test.patient.id,"profession":profession,
+        "profession" : profession,"phaResult":self.controlDict["4-PHA"],"pwmResult":self.controlDict["6-PWM"],
+        "4-4Result":self.resultDict["4D"]["BeSO4 100uM [1X10-4]"],"4-5Result":self.resultDict["4D"]["BeSO4 10uM [1X10-5]"],"4-6Result":self.resultDict["4D"]["BeSO4 1uM [1X10-6]"],
+        "6-4Result":self.resultDict["6D"]["BeSO4 100uM [1X10-4]"],"6-5Result":self.resultDict["6D"]["BeSO4 10uM [1X10-5]"],"6-6Result":self.resultDict["6D"]["BeSO4 1uM [1X10-6]"]}
+        if(isPositive):
+            dic["isPositiveResult"] = "חיובי"
+        else:
+            dic["isPositiveResult"] = "שלילי"
+        if(isNormal):
+            dic["isNormalResult"] = "כן"
+        else:
+            dic["isNormalResult"] = "לא"  
+
+        for key in dic:
+            findReplace(doc,key,str(dic[key]))
+            doc.save(newStr)
+        
+        file_path = newStr
+        if os.path.exists(file_path):
+            with open(file_path, 'rb') as fh:
+                response = HttpResponse(fh.read(), content_type="application/vnd.ms-word")
+                response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
+                return response
+        raise Http404
+        
+
+def findReplace(document,str,rplc):
+    for table in document.tables:
+        for row in table.rows:
+            for cell in row.cells:
+                for paragraph in cell.paragraphs:
+                    if str in paragraph.text:
+                        paragraph.text = paragraph.text.replace(str, rplc)
+
 

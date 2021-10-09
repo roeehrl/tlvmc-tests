@@ -3,12 +3,16 @@
     grid-template-columns: repeat(5, 1fr);
     gap: 10px;
     margin-bottom:3%;
+    height: fit-content;
   }
 
 .test {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 5px;
+    gap:3px;
+    
+    height: fit-content;
+    width: fit-content;
 }
 
 .well{
@@ -17,6 +21,9 @@
 
 .plate{
     background-color: rgb(193, 199, 199);
+    height: fit-content;
+    padding: 3px;
+    border-radius: 10px;
 
 }
 
@@ -31,3 +38,19 @@
     margin: 1%;
 }
 
+#addTest{
+    display: none;
+    position: absolute;
+    background-color: whitesmoke;
+    z-index: 10;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    border: 2px solid #000000;
+    border-radius: 5px;
+    padding: 10px;
+};
+
+.edit{
+    color:orange;
+}

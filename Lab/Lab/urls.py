@@ -13,26 +13,29 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
 from django.conf.urls import url
 from django.urls import path
 from Beryllium import views
-from Beryllium.views import deleteTests, WellExcel, getWellsJSON, saveWellsJSON, isWellActive, getSecJSON
+from Beryllium.views import patientsView, testersView, WellExcel, getWellsJSON, saveWellsJSON, isWellActive, getSecJSON, exportDoc, dashboard
 
 
 urlpatterns = [
     path('Beryllium/admin/', admin.site.urls),
     path('Beryllium/BeTest/<int:id>/', views.BeTestView.as_view(), name='BeTest'),
     path('Beryllium/TestView/<int:id>/', views.TestViewView.as_view(), name='ResultViewt'),
-    path('Beryllium/index', views.index.as_view()),
     path('Beryllium/TestCalc/<int:id>', views.TestCalc.as_view()),
-    path('Beryllium/deleteTests', deleteTests),
+    path('Beryllium/testers', testersView),
+    path('Beryllium/patients', patientsView),
+
     path('Beryllium/WellExcel/<int:id>', WellExcel),
     path('Beryllium/WellsJSON/<int:id>', getWellsJSON),
     path('Beryllium/saveWellsJSON/',saveWellsJSON),
     path('Beryllium/isWellActive/<int:id>',isWellActive),
     path('Beryllium/getSecJSON/<int:id>/<int:num>/<sec>',getSecJSON),
-
+    path('Beryllium/Export/<int:id>',exportDoc),
+    path('Beryllium/dashboard',views.dashboard.as_view()),
 
 
     url(r'^WellPartial_view/(?P<arg2>\w+)/$',

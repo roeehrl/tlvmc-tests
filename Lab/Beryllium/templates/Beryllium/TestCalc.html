@@ -29,57 +29,140 @@ const csrftoken = getCookie('csrftoken');
 {% endblock %}
 
 {% block content %}
+   <div class="row">
 
-<div id = "results" class="container">
-<h2>Results:</h2>
-{%for key,value in resultDict.items%}  
-{%for key2,value2 in value.items%}
+                        <!-- Beryllium Card Example -->
+                        <div class="col-xl-12 col-md-12 mb-12">
+                            <div class="card border-left-primary shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-lg font-weight-bold text-primary text-uppercase mb-1">
+                                                Beryllium Test ID {{test.id}}</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">For Patient {{test.patient}} conducted by {{test.tester}}</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">Date of conduction {{test.date}}</div>
 
-<p>{{key}}
-{{key2}}: {{value2}}</p>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-vials fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-
-{%endfor%}
-{%endfor%}
-
-{%for key,value in controlDict.items%}  
-
-
-<p>{{key}}: {{value}} </p>
-
-
-{%endfor%}
-
-<h2>Specification:</h2>
-
-{%for p in plates%}
-<div id = "plate{{p.num}}" class="wrapper">
-    <script>
-    const hot{{p.num}} = {};
-    </script>
-
-    {% for x in loop%}
-    <div id = "viewCalc">
-    <div id="table{{p.num}}{{x}}" class="hot"></div>
-    <p>{%for key,value in stats.items%}
-  
-        {%if key == p.num%}
-            {%for key2,value2 in value.items%}
-            
-            {%if key2 == x %}
-                
-                {%for key3,value3 in value2.items%}
-                   <p> {{key3}} : {{value3}}</p>
-                {%endfor%}
-            
-            {%endif%}
-            {%endfor%}
-        {%endif%}
-
-    {%endfor%}
-    </p>
-    </div>
+<h1>
     
+</h1>
+<div class="row">
+  
+    <div class="col">
+        <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">Test Results</h6>
+                                </div>
+                                <div class="card-body">
+                                    {%for key,value in resultDict.items%}  
+            {%for key2,value2 in value.items%}
+
+            <p>{{key}}
+            {{key2}}: {{value2}}</p>
+
+
+            {%endfor%}
+            {%endfor%}
+
+            {%for key,value in controlDict.items%}  
+
+
+            <p>{{key}}: {{value}} </p>
+
+
+            {%endfor%}
+                                </div>
+                            </div>
+    </div>
+    <div class="col">
+    <div class="card mb-4">
+                                <div class="card-header">
+                                    Report Generator
+                                </div>
+                                <div class="card-body">
+                                    Please pick the corresponding interpretation to generate the report.
+                                    <hr>
+                                     <form action="/Beryllium/Export/{{test.id}}" method="post">
+            {% csrf_token %}
+            <label for="isNormal">is response to mitogen normal:</label>
+            <select name="isNormal" id="isNormal">
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+            <br>
+            <label for="isPositive">is response to Beryllium positive or negative:</label>
+            <select name="isPositive" id="isPositive">
+                <option value="Positive">Positive</option>
+                <option value="Negative">Negative</option>
+            </select>
+            <br>
+            <label for="Profession">Enter Profession</label>
+            <input type="text" id="Profession" name="Profession">
+           
+            <br><br>
+            <input type="submit" value="Generate Report" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                                class="fas fa-download fa-sm text-white-50"></i></input>
+        </form>
+                                </div>
+                            </div>
+        
+       
+        
+
+    </div>
+</div>
+
+<div class="row">
+    <div class="col">
+    <div class="card shadow mb-4">
+                                <!-- Card Header - Accordion -->
+                                <a href="#collapseCardExample" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
+                                    <h6 class="m-0 font-weight-bold text-primary">Result Specifications</h6>
+                                </a>
+                                <!-- Card Content - Collapse -->
+                                <div class="collapse show" id="collapseCardExample" style="">
+                                    <div class="card-body">
+                                       {%for p in plates%}
+        <div id = "plate{{p.num}}">
+            <script>
+            const hot{{p.num}} = {};
+            </script>
+
+            {% for x in loop%}
+                <div id = "viewCalc" class="wrapper">
+                    <div id="table{{p.num}}{{x}}" class="hot">
+                    </div>
+                        <p>{%for key,value in stats.items%}
+                    
+                                {%if key == p.num%}
+                                    {%for key2,value2 in value.items%}
+                                    
+                                        {%if key2 == x %}
+                                            
+                                            {%for key3,value3 in value2.items%}
+                                            <p> {{key3}} : {{value3}}</p>
+                                            {%endfor%}
+                                        
+                                        {%endif%}
+                                    {%endfor%}
+                                {%endif%}
+                        
+                        {%endfor%}
+                        </p>
+                
+        
+    
+
 
 
  
@@ -148,8 +231,16 @@ function ajax(url, method, params, callback) {
   return obj;
 }
 </script>
+</div>
  {%endfor%}
  </div>
  {%endfor%}
+                                    </div>
+                                </div>
+                            </div>
+
+        
 </div>
+</div>
+
 {% endblock %}

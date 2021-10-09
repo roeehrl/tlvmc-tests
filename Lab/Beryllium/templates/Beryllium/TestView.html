@@ -6,15 +6,57 @@
 
 
 {% block content %}
-<div class="container">
-<h1>
-    Test ID{{test.id}} For Patient {{test.patient}} conducted by {{test.tester}}
-    Date of conduction {{test.date}}
-</h1>
-<div id = "rawView" class="test" >
-    {% include "Beryllium/BeTest.html" %}
+ <!-- Content Row -->
+                    <div class="row">
 
+                        <!-- Beryllium Card Example -->
+                        <div class="col-xl-12 col-md-12 mb-12">
+                            <div class="card border-left-primary shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-lg font-weight-bold text-primary text-uppercase mb-1">
+                                                Beryllium Test ID {{test.id}}</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">For Patient {{test.patient}} conducted by {{test.tester}}</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">Date of conduction {{test.date}}</div>
+
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-vials fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Content Row -->
+<h1>
+    
+</h1>
+<div id = "rawView" class="row" >
+<div class="col">
+<div class="card shadow mb-4">
+   <div class="card-header py-3">
+     <h6 class="m-0 font-weight-bold text-primary">Test Overview</h6>
+    </div>
+    <div class="card-body">                
+    {% include "Beryllium/BeTest.html" %}
+        </div>
+    </div>
+</div>
+
+<div class="col">
+<div class="card shadow mb-4">
+   <div class="card-header py-3">
+     <h6 class="m-0 font-weight-bold text-primary">Wells Excel</h6>
+    </div>
+    <div class="card-body">  
     {% include "Beryllium/WellExcel.html" %}
+     </div>
+    </div>
+</div>
 
 </div>
 
@@ -56,5 +98,5 @@
                     
                 }
 </script>
-</div>
+
 {% endblock %}
