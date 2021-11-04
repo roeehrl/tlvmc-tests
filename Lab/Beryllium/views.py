@@ -4,6 +4,7 @@ from django.http.response import HttpResponse
 from django.shortcuts import redirect, render
 from django.http import HttpResponseRedirect, request
 from django.views import View
+from django.views.generic.base import RedirectView
 from Beryllium.models import Test,Well,Plate,Patient,Tester
 from .forms import TestForm, WellForm
 from .initializeTest import CreateTest
@@ -144,6 +145,10 @@ def patientsView(request):
     return render(request,template,context)
 
 
+def changeType(request,type):
+    request.session["type"] = type
+    return redirect('dashboard')
+
 
 
 # Create your views here.
@@ -151,6 +156,7 @@ class dashboard(View):
     template = 'Beryllium/dashboard.html'
   
     def get(self,request):
+        request.session["type"] ="Beryllium"
         form = TestForm()
         patients = Patient.objects.all()
         testers = Tester.objects.all()
@@ -161,6 +167,7 @@ class dashboard(View):
             "patients" : patients,
             "testers" :testers,
             "tests" : tests,
+            "type" : request.session["type"]
         }
         return render(request,self.template,context)
     

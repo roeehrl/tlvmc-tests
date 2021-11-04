@@ -241,6 +241,7 @@ def CreateTest(name, p : Patient, t : Tester):
     test = Test(tester = t, patient = p)
     test.patient = p
     test.tester = t
+    test.type = 1
     test.date = django.utils.timezone.now()
     test.name = name
 

@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.conf.urls import url
 from django.urls import path
 from Beryllium import views
-from Beryllium.views import patientsView, testersView, WellExcel, getWellsJSON, saveWellsJSON, isWellActive, getSecJSON, exportDoc, dashboard
+from Beryllium.views import patientsView, testersView, WellExcel, getWellsJSON, saveWellsJSON, isWellActive, getSecJSON, exportDoc, dashboard, changeType
 
 
 urlpatterns = [
@@ -36,6 +36,8 @@ urlpatterns = [
     path('Beryllium/getSecJSON/<int:id>/<int:num>/<sec>',getSecJSON),
     path('Beryllium/Export/<int:id>',exportDoc),
     path('Beryllium/dashboard',views.dashboard.as_view()),
+    path('dashboard',views.dashboard.as_view()),
+    path('session/<type>', changeType),
 
 
     url(r'^WellPartial_view/(?P<arg2>\w+)/$',
