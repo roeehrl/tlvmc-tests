@@ -1,6 +1,6 @@
 from time import timezone
 from typing import List
-from .models import Test, Plate, Plate_Type,Well,Material, Patient,Tester
+from .models import Test, Plate, Plate_Type, Test_type,Well,Material, Patient,Tester
 import django.utils.timezone
 
 def main():
@@ -16,7 +16,7 @@ def main():
     Material(id = 4, name='PWM').save()
 
 
-    CreateTest(p,t)
+    CreateTest("trial",p,t)
 
 
 
@@ -241,7 +241,7 @@ def CreateTest(name, p : Patient, t : Tester):
     test = Test(tester = t, patient = p)
     test.patient = p
     test.tester = t
-    test.type = 1
+    test.type = Test_type.objects.get(name = "Beryllium")
     test.date = django.utils.timezone.now()
     test.name = name
 
